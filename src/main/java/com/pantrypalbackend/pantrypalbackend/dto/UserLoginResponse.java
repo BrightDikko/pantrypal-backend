@@ -1,5 +1,6 @@
 package com.pantrypalbackend.pantrypalbackend.dto;
 
+import com.pantrypalbackend.pantrypalbackend.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthenticationResponse {
-    private String message;
+public class UserLoginResponse {
+    private User user;
+    private String token;
 }
