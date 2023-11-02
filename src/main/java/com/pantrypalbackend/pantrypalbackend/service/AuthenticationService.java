@@ -1,8 +1,8 @@
 package com.pantrypalbackend.pantrypalbackend.service;
 
-import com.pantrypalbackend.pantrypalbackend.domain.User;
+import com.pantrypalbackend.pantrypalbackend.dto.AuthenticationResponse;
 import com.pantrypalbackend.pantrypalbackend.dto.UserRegistrationRequest;
 
 public interface AuthenticationService {
-    User registerUser(UserRegistrationRequest userRegistrationRequest);
+    AuthenticationResponse registerUser(UserRegistrationRequest userRegistrationRequest);
 }
