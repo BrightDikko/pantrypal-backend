@@ -1,8 +1,9 @@
 package com.pantrypalbackend.pantrypalbackend.controller;
 
-import com.pantrypalbackend.pantrypalbackend.domain.User;
-import com.pantrypalbackend.pantrypalbackend.dto.AuthenticationResponse;
+import com.pantrypalbackend.pantrypalbackend.dto.UserLoginRequest;
+import com.pantrypalbackend.pantrypalbackend.dto.UserLoginResponse;
 import com.pantrypalbackend.pantrypalbackend.dto.UserRegistrationRequest;
+import com.pantrypalbackend.pantrypalbackend.dto.UserRegistrationResponse;
 import com.pantrypalbackend.pantrypalbackend.service.Impl.AuthenticationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,14 @@ public class AuthenticationController {
     private final AuthenticationServiceImpl authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> registerUser(@RequestBody UserRegistrationRequest userRegistrationRequest) {
+    public ResponseEntity<UserRegistrationResponse> register(@RequestBody UserRegistrationRequest userRegistrationRequest) {
         System.out.println("Request to register user received. \nRequest: " + userRegistrationRequest);
         return ResponseEntity.ok(authenticationService.registerUser(userRegistrationRequest));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest userLoginRequest) {
+        System.out.println("Request to log in user received. \nRequest: " + userLoginRequest);
+        return ResponseEntity.ok(authenticationService.loginUser(userLoginRequest));
     }
 }
