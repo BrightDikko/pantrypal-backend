@@ -8,6 +8,7 @@ import com.pantrypalbackend.pantrypalbackend.dto.UserRegistrationResponse;
 import com.pantrypalbackend.pantrypalbackend.exceptions.EmailAlreadyTakenException;
 import com.pantrypalbackend.pantrypalbackend.exceptions.UserDoesNotExistException;
 import com.pantrypalbackend.pantrypalbackend.repository.UserRepository;
+import com.pantrypalbackend.pantrypalbackend.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticationServiceImpl {
+public class AuthenticationServiceImpl implements AuthenticationService {
     public final PasswordEncoder passwordEncoder;
     public final UserRepository userRepository;
 
