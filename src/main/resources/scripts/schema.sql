@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS users;
 
+-- USERS TABLE
 CREATE TABLE users
 (
     id         BIGINT NOT NULL AUTO_INCREMENT,
@@ -13,9 +14,11 @@ CREATE TABLE users
 ALTER TABLE users
     ADD CONSTRAINT UK_6dotkott2kjsp8vw4d0m25fb7 UNIQUE (email);
 
-DROP TABLE IF EXISTS food;
 
-CREATE TABLE food
+-- FOODS TABLE
+DROP TABLE IF EXISTS foods;
+
+CREATE TABLE foods
 (
     id               INT PRIMARY KEY,
     food_group       VARCHAR(255),
@@ -62,4 +65,30 @@ CREATE TABLE food
     phosphorus_USRDA DOUBLE,
     selenium_USRDA   DOUBLE,
     zinc_USRDA       DOUBLE
-);
+) ENGINE = InnoDB;
+
+
+-- RECIPES TABLE
+DROP TABLE IF EXISTS recipes;
+
+CREATE TABLE recipes
+(
+    id           VARCHAR(255) PRIMARY KEY,
+    name         VARCHAR(255),
+    source       VARCHAR(255),
+    prep_time    DOUBLE,
+    wait_time    DOUBLE,
+    cook_time    DOUBLE,
+    servings     DOUBLE,
+    comments     TEXT,
+    calories     DOUBLE,
+    fat          DOUBLE,
+    sat_fat      DOUBLE,
+    carbs        DOUBLE,
+    fiber        DOUBLE,
+    sugar        DOUBLE,
+    protein      DOUBLE,
+    instructions TEXT,
+    ingredients  TEXT,
+    tags         TEXT
+) ENGINE = InnoDB;

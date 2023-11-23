@@ -1,6 +1,7 @@
 package com.pantrypalbackend.pantrypalbackend;
 
 import com.pantrypalbackend.pantrypalbackend.service.Impl.FoodDataServiceImpl;
+import com.pantrypalbackend.pantrypalbackend.service.Impl.RecipeDataServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -12,6 +13,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class PantryPalBackendApplication implements CommandLineRunner {
 	private final FoodDataServiceImpl foodDataService;
+	private final RecipeDataServiceImpl recipeDataService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(PantryPalBackendApplication.class, args);
@@ -19,12 +21,14 @@ public class PantryPalBackendApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		// Path to the CSV file
-		String csvPath = "src/main/resources/data/food.csv";
+		// Path to data files
+		String FoodCSVPath = "src/main/resources/data/food.csv";
+		String RecipesJSONPath = "src/main/resources/data/recipes.json";
 
-		// Load CSV data into database
+		// Load data into database
 		try {
-			foodDataService.loadCSVData(csvPath);
+			foodDataService.loadAndSaveFoodData(FoodCSVPath);
+			recipeDataService.loadAndSaveRecipeData(RecipesJSONPath);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

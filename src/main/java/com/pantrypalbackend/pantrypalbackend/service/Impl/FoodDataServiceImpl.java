@@ -22,7 +22,7 @@ public class FoodDataServiceImpl implements FoodDataService {
 
     private final FoodRepository foodRepository;
 
-    public void loadCSVData(String path) throws IOException {
+    public void loadAndSaveFoodData(String path) throws IOException {
         try (Reader reader = new FileReader(path)) {
             CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader());
             List<Food> foods = new ArrayList<>();
