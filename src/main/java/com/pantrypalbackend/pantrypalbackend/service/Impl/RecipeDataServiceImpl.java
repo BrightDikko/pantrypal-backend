@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +29,11 @@ public class RecipeDataServiceImpl implements RecipeDataService {
 
         // Save each recipe
         recipeRepository.saveAll(recipes.values());
+    }
+
+    public Recipe getRecipeByName(String name) {
+        Optional<Recipe> recipeOptional = recipeRepository.retrieveRecipeByName(name);
+        return recipeOptional.orElse(null);
     }
 }
 

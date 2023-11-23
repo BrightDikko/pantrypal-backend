@@ -1,5 +1,6 @@
 package com.pantrypalbackend.pantrypalbackend.controller;
 
+import com.pantrypalbackend.pantrypalbackend.constants.PathConstants;
 import com.pantrypalbackend.pantrypalbackend.dto.UserLoginRequest;
 import com.pantrypalbackend.pantrypalbackend.dto.UserLoginResponse;
 import com.pantrypalbackend.pantrypalbackend.dto.UserRegistrationRequest;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping(PathConstants.AUTH)
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationServiceImpl authenticationService;
