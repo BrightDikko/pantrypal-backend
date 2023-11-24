@@ -6,6 +6,10 @@ import com.pantrypalbackend.pantrypalbackend.dto.UserLoginResponse;
 import com.pantrypalbackend.pantrypalbackend.dto.UserRegistrationRequest;
 import com.pantrypalbackend.pantrypalbackend.dto.UserRegistrationResponse;
 import com.pantrypalbackend.pantrypalbackend.service.Impl.AuthenticationServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,14 +24,29 @@ public class AuthenticationController {
     private final AuthenticationServiceImpl authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserRegistrationResponse> register(@RequestBody UserRegistrationRequest userRegistrationRequest) {
-        System.out.println("Request to register user received. \nRequest: " + userRegistrationRequest);
+    @Operation(summary = "User Registration",
+            description = "Register a new user with their details.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody( // Swagger RB - Fully qualified name
+                    content = @Content(schema = @Schema(implementation = UserRegistrationRequest.class))))
+    @ApiResponse(responseCode = "200",
+            description = "User registered successfully",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = UserRegistrationResponse.class)))
+    public ResponseEntity<UserRegistrationResponse>
+    register(@RequestBody UserRegistrationRequest userRegistrationRequest) {
         return ResponseEntity.ok(authenticationService.registerUser(userRegistrationRequest));
     }
 
     @PostMapping("/login")
+    @Operation(summary = "User Login",
+            description = "Authenticate a user and return a login token.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody( // Swagger RB - Fully qualified name
+                    content = @Content(schema = @Schema(implementation = UserLoginRequest.class))))
+    @ApiResponse(responseCode = "200",
+            description = "User logged in successfully",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = UserLoginResponse.class)))
     public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest userLoginRequest) {
-        System.out.println("Request to log in user received. \nRequest: " + userLoginRequest);
         return ResponseEntity.ok(authenticationService.loginUser(userLoginRequest));
     }
 }

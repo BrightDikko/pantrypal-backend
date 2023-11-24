@@ -35,7 +35,7 @@ This repository houses the backend application package for the platform, built u
 
 ## API Documentation
 
-Swagger UI available at : ...coming soon
+#### Swagger UI available at : http://pantrypalapplication-env.eba-tdkaruad.us-east-1.elasticbeanstalk.com/swagger-ui/index.html#/
 
 ## Contributions
 
