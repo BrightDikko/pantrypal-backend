@@ -24,11 +24,18 @@ public class PantryPalBackendApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
+		System.out.println("INSIDE COMMANDLINE RUNNER");
+
+		/*
 		try {
+			System.out.println("PARSE DATA - 1");
 			foodDataService.loadAndSaveFoodData(FOOD_CSV_PATH);
+
+			System.out.println("PARSE DATA - 2");
 			recipeDataService.loadAndSaveRecipeData(RECIPES_JSON_PATH);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		 */
 	}
 }

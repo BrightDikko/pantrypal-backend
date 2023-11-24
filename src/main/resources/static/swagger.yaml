@@ -1,0 +1,225 @@
+openapi: 3.0.0
+info:
+  title: PantryPal API
+  version: 1.0.0
+servers:
+  - url: http://pantrypalapplication-env.eba-tdkaruad.us-east-1.elasticbeanstalk.com/
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+            example:
+              firstName: "Chase"
+              lastName: "Dixon"
+              email: "CDixon@nd.edu"
+              password: "password"
+      responses:
+        '200':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "User with email CDixon@nd.edu was registered successfully!"
+
+  /auth/login:
+    post:
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+            example:
+              email: "CDixon@nd.edu"
+              password: "password"
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+              example:
+                user:
+                  id: 5
+                  email: "CDixon@nd.edu"
+                  firstName: "Chase"
+                  lastName: "Dixon"
+                token: ""
+
+  /recipe:
+    get:
+      summary: Get recipe by name
+      parameters:
+        - in: query
+          name: name
+          required: true
+          schema:
+            type: string
+          example: "Godiva%20Dark%20Chocolate%20Cheesecake"
+      responses:
+        '200':
+          description: Recipe details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+              example:
+                id: "14"
+                name: "Godiva Dark Chocolate Cheesecake"
+                source: "Godiva.com, Chef Morgan Wilson"
+                servings: 10
+                comments: ""
+                calories: 0.0
+                fat: 0.0
+                carbs: 0.0
+                fiber: 0.0
+                sugar: 0.0
+                protein: 0.0
+                instructions: "In a food processor with a blade attachment..."
+                ingredients:
+                  - "2 1/2 cup cream cheese, room temperature\n, 1/2 cup sugar\n..."
+                tags:
+                  - "cheesecake, dessert, pie, chocolate, untried"
+                preptime: 0
+                waittime: 0
+                cooktime: 0
+                satfat: 0.0
+
+  /recipe/searchByIngredients:
+    post:
+      summary: Search recipes by ingredients
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+            example:
+              - "butter"
+              - "milk"
+              - "salt"
+              - "pepper"
+              - "cinnamon"
+      responses:
+        '200':
+          description: List of recipes matching ingredients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipe'
+              example:
+                - id: "57"
+                  name: "Sweet Mashed Potatoes"
+                  source: "Yuri Elkaim"
+                  servings: 4
+                  comments: ""
+                  calories: 0.0
+                  fat: 0.0
+                  carbs: 0.0
+                  fiber: 0.0
+                  sugar: 0.0
+                  protein: 0.0
+                  instructions: "1. In a pot that covers the potatoes with water..."
+                  ingredients:
+                    - "2 large sweet potatoes, peeled and chopped\n, 1/2 stick butter\n..."
+                  tags:
+                    - "potatoes, FUF, sides"
+                  preptime: 0
+                  waittime: 0
+                  cooktime: 0
+                  satfat: 0.0
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+
+    Recipe:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        source:
+          type: string
+        servings:
+          type: integer
+        comments:
+          type: string
+        calories:
+          type: number
+        fat:
+          type: number
+        carbs:
+          type: number
+        fiber:
+          type: number
+        sugar:
+          type: number
+        protein:
+          type: number
+        instructions:
+          type: string
+        ingredients:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            type: string
+        preptime:
+          type: integer
+        waittime:
+          type: integer
+        cooktime:
+          type: integer
+        satfat:
+          type: number

@@ -64,6 +64,25 @@
 			<artifactId>commons-csv</artifactId>
 			<version>1.8</version>
 		</dependency>
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-common</artifactId>
+			<version>2.34</version>
+		</dependency>
+
+		<!-- Springdoc Swagger Dependencies -->
+		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.2.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -81,6 +100,18 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>pantry-pal-backend-api</finalName>
 	</build>
+
+<!--	<profiles>-->
+<!--		<profile>-->
+<!--			<id>prod</id>-->
+<!--			<properties>-->
+<!--				<spring.profiles.active>-->
+<!--					prod-->
+<!--				</spring.profiles.active>-->
+<!--			</properties>-->
+<!--		</profile>-->
+<!--	</profiles>-->
 
 </project>
