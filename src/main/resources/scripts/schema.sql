@@ -92,3 +92,20 @@ CREATE TABLE recipes
     ingredients  TEXT,
     tags         TEXT
 ) ENGINE = InnoDB;
+
+
+-- FAVORITE_RECIPES JOIN TABLE
+DROP TABLE IF EXISTS favorite_recipes;
+
+CREATE TABLE favorite_recipes
+(
+    user_id    BIGINT NOT NULL,
+    recipe_id  VARCHAR(255) NOT NULL,
+    PRIMARY KEY (user_id, recipe_id),
+    CONSTRAINT fk_user
+        FOREIGN KEY (user_id)
+            REFERENCES users (id),
+    CONSTRAINT fk_recipe
+        FOREIGN KEY (recipe_id)
+            REFERENCES recipes (id)
+) ENGINE = InnoDB;

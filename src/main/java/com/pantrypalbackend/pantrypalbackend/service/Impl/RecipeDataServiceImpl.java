@@ -3,10 +3,13 @@ package com.pantrypalbackend.pantrypalbackend.service.Impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pantrypalbackend.pantrypalbackend.domain.Recipe;
+import com.pantrypalbackend.pantrypalbackend.domain.User;
 import com.pantrypalbackend.pantrypalbackend.repository.RecipeRepository;
+import com.pantrypalbackend.pantrypalbackend.repository.UserRepository;
 import com.pantrypalbackend.pantrypalbackend.service.RecipeDataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,9 +23,11 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RecipeDataServiceImpl implements RecipeDataService {
 
     private final RecipeRepository recipeRepository;
+    private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
 
     public void loadAndSaveRecipeData(String path) throws IOException {
@@ -62,5 +67,32 @@ public class RecipeDataServiceImpl implements RecipeDataService {
         return matchingRecipes;
 
     }
+
+    public void addRecipeToFavorites(Long userId, String recipeId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Recipe recipe = recipeRepository.findById(Long.valueOf(recipeId)).orElseThrow(() -> new RuntimeException("Recipe not found"));
+
+        user.getFavoriteRecipes().add(recipe);
+        System.out.println("user.getFavoriteRecipes() " + user.getFavoriteRecipes());
+        userRepository.save(user);
+    }
+
+    public void removeRecipeFromFavorites(Long userId, String recipeId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Recipe recipe = recipeRepository.findById(Long.valueOf(recipeId)).orElseThrow(() -> new RuntimeException("Recipe not found"));
+
+        user.getFavoriteRecipes().remove(recipe);
+        System.out.println("user.getFavoriteRecipes() " + user.getFavoriteRecipes());
+        userRepository.save(user);
+        userRepository.flush();
+    }
+
+    public List<Recipe> getUserFavoriteRecipes(Long userId) {
+        return userRepository.findById(userId)
+                .map(User::getFavoriteRecipes)
+                .map(ArrayList::new)
+                .orElse(new ArrayList<>());
+    }
+
 
 }
