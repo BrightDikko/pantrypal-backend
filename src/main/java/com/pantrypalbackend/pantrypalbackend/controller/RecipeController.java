@@ -2,6 +2,7 @@ package com.pantrypalbackend.pantrypalbackend.controller;
 
 import com.pantrypalbackend.pantrypalbackend.constants.PathConstants;
 import com.pantrypalbackend.pantrypalbackend.domain.Recipe;
+import com.pantrypalbackend.pantrypalbackend.dto.CreateUserMadeRecipeRequest;
 import com.pantrypalbackend.pantrypalbackend.dto.FavoriteRecipeRequest;
 import com.pantrypalbackend.pantrypalbackend.dto.FavoriteRecipeResponse;
 import com.pantrypalbackend.pantrypalbackend.service.Impl.RecipeDataServiceImpl;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -110,16 +112,31 @@ public class RecipeController {
                     @ApiResponse(responseCode = "404", description = "User not found")
             })
     public ResponseEntity<List<Recipe>> getUserFavoriteRecipes(@PathVariable Long userId) {
-        System.out.println("\n userId: " + userId);
-
         List<Recipe> favoriteRecipes = recipeDataService.getUserFavoriteRecipes(userId);
-        System.out.println("\n favoriteRecipes: " + favoriteRecipes);
 
         if (!favoriteRecipes.isEmpty()) {
             return ResponseEntity.ok(favoriteRecipes);
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping("/addUserMadeRecipe")
+    @Operation(summary = "Add Recipes Created by a User",
+            description = "Add new user-created recipe.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Recipe to be added, and the user who created it",
+                    content = @Content(schema = @Schema(implementation = CreateUserMadeRecipeRequest.class))),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Recipe added successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = CreateUserMadeRecipeRequest.class)))
+            })
+    public ResponseEntity<Recipe> adduserMadeRecipe(@RequestBody CreateUserMadeRecipeRequest request) {
+        System.out.println("\n CreateUserMadeRecipeRequest: " + request);
+
+        Recipe createdRecipe = recipeDataService.createUserMadeRecipe(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdRecipe);
     }
 
 }

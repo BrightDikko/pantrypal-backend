@@ -109,3 +109,22 @@ CREATE TABLE favorite_recipes
         FOREIGN KEY (recipe_id)
             REFERENCES recipes (id)
 ) ENGINE = InnoDB;
+
+
+-- USER_CREATED_RECIPES TABLE
+DROP TABLE IF EXISTS user_created_recipes;
+
+CREATE TABLE user_created_recipes
+(
+    id         BIGINT NOT NULL AUTO_INCREMENT,
+    user_id    BIGINT NOT NULL,
+    recipe_id  VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    CONSTRAINT fk_user_created
+        FOREIGN KEY (user_id)
+            REFERENCES users (id),
+    CONSTRAINT fk_recipe_created
+        FOREIGN KEY (recipe_id)
+            REFERENCES recipes (id)
+) ENGINE = InnoDB;

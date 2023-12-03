@@ -4,7 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pantrypalbackend.pantrypalbackend.domain.Recipe;
 import com.pantrypalbackend.pantrypalbackend.domain.User;
+import com.pantrypalbackend.pantrypalbackend.domain.UserCreatedRecipe;
+import com.pantrypalbackend.pantrypalbackend.dto.CreateUserMadeRecipeRequest;
 import com.pantrypalbackend.pantrypalbackend.repository.RecipeRepository;
+import com.pantrypalbackend.pantrypalbackend.repository.UserCreatedRecipeRepository;
 import com.pantrypalbackend.pantrypalbackend.repository.UserRepository;
 import com.pantrypalbackend.pantrypalbackend.service.RecipeDataService;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,9 +31,11 @@ import java.util.stream.Collectors;
 @Transactional
 public class RecipeDataServiceImpl implements RecipeDataService {
 
-    private final RecipeRepository recipeRepository;
-    private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
+
+    private final UserRepository userRepository;
+    private final UserCreatedRecipeRepository userCreatedRecipeRepository;
+    private final RecipeRepository recipeRepository;
 
     public void loadAndSaveRecipeData(String path) throws IOException {
         Map<String, Recipe> recipes = objectMapper.readValue(new File(path), new TypeReference<Map<String, Recipe>>() {
@@ -82,7 +89,6 @@ public class RecipeDataServiceImpl implements RecipeDataService {
         Recipe recipe = recipeRepository.findById(Long.valueOf(recipeId)).orElseThrow(() -> new RuntimeException("Recipe not found"));
 
         user.getFavoriteRecipes().remove(recipe);
-        System.out.println("user.getFavoriteRecipes() " + user.getFavoriteRecipes());
         userRepository.save(user);
         userRepository.flush();
     }
@@ -92,6 +98,52 @@ public class RecipeDataServiceImpl implements RecipeDataService {
                 .map(User::getFavoriteRecipes)
                 .map(ArrayList::new)
                 .orElse(new ArrayList<>());
+    }
+
+    public Recipe createUserMadeRecipe(CreateUserMadeRecipeRequest createUserMadeRecipeRequest) {
+
+        System.out.println("\n recipe: " + createUserMadeRecipeRequest);
+
+        User user = userRepository.findById(createUserMadeRecipeRequest.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+        System.out.println("\n user: " + user);
+
+        Recipe recipe = buildUserCreatedRecipe(createUserMadeRecipeRequest);
+
+        Recipe newlyAddedRecipe = recipeRepository.save(recipe);
+        System.out.println("\n newlyAddedRecipe: " + newlyAddedRecipe);
+
+        UserCreatedRecipe userCreatedRecipe = UserCreatedRecipe.builder()
+                .recipe(newlyAddedRecipe)
+                .user(user)
+                .createdAt(LocalDateTime.now())
+                .build();
+        System.out.println("\n userCreatedRecipe: " + userCreatedRecipe);
+        userCreatedRecipeRepository.save(userCreatedRecipe);
+
+        return newlyAddedRecipe;
+    }
+
+    private Recipe buildUserCreatedRecipe(CreateUserMadeRecipeRequest payload) {
+        return Recipe.builder()
+                .id("user_" + payload.getUserId() + "_" + UUID.randomUUID().toString())
+                .name(payload.getName())
+                .source(payload.getSource())
+                .prepTime(payload.getPreptime())
+                .waitTime(payload.getWaittime())
+                .cookTime(payload.getCooktime())
+                .servings(payload.getServings())
+                .comments(payload.getComments())
+                .calories(payload.getCalories())
+                .fat(payload.getFat())
+                .carbs(payload.getCarbs())
+                .fiber(payload.getFiber())
+                .sugar(payload.getSugar())
+                .protein(payload.getProtein())
+                .instructions(payload.getInstructions())
+                .ingredients(payload.getIngredients())
+                .tags(payload.getTags())
+                .satFat(payload.getSatfat())
+                .build();
     }
 
 
