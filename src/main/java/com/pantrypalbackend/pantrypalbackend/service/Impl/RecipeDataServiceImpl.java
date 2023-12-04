@@ -117,6 +117,14 @@ public class RecipeDataServiceImpl implements RecipeDataService {
         return newlyAddedRecipe;
     }
 
+    public List<Recipe> getUserCreatedRecipes(Long userId) {
+        List<UserCreatedRecipe> userRecipes = userCreatedRecipeRepository.findByUserId(userId);
+        System.out.println("\nuserRecipes: " + userRecipes);
+        return userRecipes.stream()
+                .map(UserCreatedRecipe::getRecipe)
+                .collect(Collectors.toList());
+    }
+
     public Recipe updateUserMadeRecipe(UpdateUserMadeRecipeRequest updateUserMadeRecipeRequest) {
         Recipe originalRecipe = recipeRepository.findById(updateUserMadeRecipeRequest.getRecipeId())
                 .orElseThrow(() -> new RuntimeException("Recipe not found with id " + updateUserMadeRecipeRequest.getRecipeId()));
@@ -126,6 +134,18 @@ public class RecipeDataServiceImpl implements RecipeDataService {
         System.out.println("\nupdatedRecipe" + updatedRecipe);
 
         return recipeRepository.save(updatedRecipe);
+    }
+
+    public void deleteUserMadeRecipe(String recipeId) {
+        // Optional: Check if the recipe exists in the user_created_recipes table
+        UserCreatedRecipe userCreatedRecipe = userCreatedRecipeRepository.findByRecipeId(recipeId)
+                .orElseThrow(() -> new RuntimeException("User created recipe not found with id " + recipeId));
+
+        // Delete the user_created_recipe record if it exists
+        userCreatedRecipeRepository.deleteById(userCreatedRecipe.getId());
+
+        // Delete the recipe
+        recipeRepository.deleteById(recipeId);
     }
 
 

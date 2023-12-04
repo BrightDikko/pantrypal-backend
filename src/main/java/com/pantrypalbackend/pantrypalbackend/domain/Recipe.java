@@ -1,6 +1,7 @@
 package com.pantrypalbackend.pantrypalbackend.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pantrypalbackend.pantrypalbackend.utilities.StringListConverter;
 import jakarta.persistence.CascadeType;
@@ -30,6 +31,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(callSuper = false, exclude = {"users"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Recipe {
 
     @Id

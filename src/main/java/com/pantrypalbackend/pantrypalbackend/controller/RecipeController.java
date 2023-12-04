@@ -3,6 +3,7 @@ package com.pantrypalbackend.pantrypalbackend.controller;
 import com.pantrypalbackend.pantrypalbackend.constants.PathConstants;
 import com.pantrypalbackend.pantrypalbackend.domain.Recipe;
 import com.pantrypalbackend.pantrypalbackend.dto.CreateUserMadeRecipeRequest;
+import com.pantrypalbackend.pantrypalbackend.dto.DeleteUserMadeRecipeResponse;
 import com.pantrypalbackend.pantrypalbackend.dto.FavoriteRecipeRequest;
 import com.pantrypalbackend.pantrypalbackend.dto.FavoriteRecipeResponse;
 import com.pantrypalbackend.pantrypalbackend.dto.UpdateUserMadeRecipeRequest;
@@ -141,10 +142,51 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdRecipe);
     }
 
+    @GetMapping("/{userId}/recipes")
+    @Operation(summary = "Get Recipes Created by a User",
+            description = "Retrieve all recipes created by a specific user.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "User's recipes found",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = List.class))),
+                    @ApiResponse(responseCode = "404", description = "User not found")
+            })
+    public ResponseEntity<List<Recipe>> getUserCreatedRecipes(@PathVariable Long userId) {
+        List<Recipe> recipes = recipeDataService.getUserCreatedRecipes(userId);
+        return ResponseEntity.ok(recipes);
+    }
+
     @PutMapping("/updateUserMadeRecipe")
+    @Operation(summary = "Update User-Made Recipe",
+            description = "Update an existing user-made recipe.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Updated recipe details",
+                    content = @Content(schema = @Schema(implementation = UpdateUserMadeRecipeRequest.class))),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Recipe updated successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Recipe.class))),
+                    @ApiResponse(responseCode = "404", description = "Recipe not found")
+            })
     public ResponseEntity<Recipe> updateUserMadeRecipe(@RequestBody UpdateUserMadeRecipeRequest request) {
         Recipe updatedRecipe = recipeDataService.updateUserMadeRecipe(request);
         return ResponseEntity.ok(updatedRecipe);
+    }
+
+    @DeleteMapping("/{recipeId}")
+    @Operation(summary = "Delete User-Made Recipe",
+            description = "Delete a user-made recipe.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Recipe deleted successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = DeleteUserMadeRecipeResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "Recipe not found")
+            })
+    public ResponseEntity<DeleteUserMadeRecipeResponse> deleteUserMadeRecipe(@PathVariable String recipeId) {
+        recipeDataService.deleteUserMadeRecipe(recipeId);
+        return ResponseEntity.ok(DeleteUserMadeRecipeResponse.builder()
+                .message("Successfully deleted user created recipe from database!")
+                .build());
     }
 
 }
