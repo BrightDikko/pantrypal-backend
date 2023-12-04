@@ -11,7 +11,7 @@ import java.util.Optional;
 
 
 @Repository
-public interface RecipeRepository extends JpaRepository<Recipe, Long> {
+public interface RecipeRepository extends JpaRepository<Recipe, String> {
     @Query(value = "SELECT * FROM recipes WHERE name = :name", nativeQuery = true)
     Optional<Recipe> retrieveRecipeByName(String name);
 

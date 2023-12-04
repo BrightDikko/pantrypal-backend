@@ -2,20 +2,25 @@ package com.pantrypalbackend.pantrypalbackend.controller;
 
 import com.pantrypalbackend.pantrypalbackend.constants.PathConstants;
 import com.pantrypalbackend.pantrypalbackend.domain.Recipe;
+import com.pantrypalbackend.pantrypalbackend.dto.CreateUserMadeRecipeRequest;
+import com.pantrypalbackend.pantrypalbackend.dto.DeleteUserMadeRecipeResponse;
 import com.pantrypalbackend.pantrypalbackend.dto.FavoriteRecipeRequest;
 import com.pantrypalbackend.pantrypalbackend.dto.FavoriteRecipeResponse;
+import com.pantrypalbackend.pantrypalbackend.dto.UpdateUserMadeRecipeRequest;
 import com.pantrypalbackend.pantrypalbackend.service.Impl.RecipeDataServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -110,16 +115,78 @@ public class RecipeController {
                     @ApiResponse(responseCode = "404", description = "User not found")
             })
     public ResponseEntity<List<Recipe>> getUserFavoriteRecipes(@PathVariable Long userId) {
-        System.out.println("\n userId: " + userId);
-
         List<Recipe> favoriteRecipes = recipeDataService.getUserFavoriteRecipes(userId);
-        System.out.println("\n favoriteRecipes: " + favoriteRecipes);
 
         if (!favoriteRecipes.isEmpty()) {
             return ResponseEntity.ok(favoriteRecipes);
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping("/addUserMadeRecipe")
+    @Operation(summary = "Add Recipes Created by a User",
+            description = "Add new user-created recipe.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Recipe to be added, and the user who created it",
+                    content = @Content(schema = @Schema(implementation = CreateUserMadeRecipeRequest.class))),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Recipe added successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = CreateUserMadeRecipeRequest.class)))
+            })
+    public ResponseEntity<Recipe> adduserMadeRecipe(@RequestBody CreateUserMadeRecipeRequest request) {
+        System.out.println("\n CreateUserMadeRecipeRequest: " + request);
+
+        Recipe createdRecipe = recipeDataService.createUserMadeRecipe(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdRecipe);
+    }
+
+    @GetMapping("/{userId}/recipes")
+    @Operation(summary = "Get Recipes Created by a User",
+            description = "Retrieve all recipes created by a specific user.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "User's recipes found",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = List.class))),
+                    @ApiResponse(responseCode = "404", description = "User not found")
+            })
+    public ResponseEntity<List<Recipe>> getUserCreatedRecipes(@PathVariable Long userId) {
+        List<Recipe> recipes = recipeDataService.getUserCreatedRecipes(userId);
+        return ResponseEntity.ok(recipes);
+    }
+
+    @PutMapping("/updateUserMadeRecipe")
+    @Operation(summary = "Update User-Made Recipe",
+            description = "Update an existing user-made recipe.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Updated recipe details",
+                    content = @Content(schema = @Schema(implementation = UpdateUserMadeRecipeRequest.class))),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Recipe updated successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Recipe.class))),
+                    @ApiResponse(responseCode = "404", description = "Recipe not found")
+            })
+    public ResponseEntity<Recipe> updateUserMadeRecipe(@RequestBody UpdateUserMadeRecipeRequest request) {
+        Recipe updatedRecipe = recipeDataService.updateUserMadeRecipe(request);
+        return ResponseEntity.ok(updatedRecipe);
+    }
+
+    @DeleteMapping("/{recipeId}")
+    @Operation(summary = "Delete User-Made Recipe",
+            description = "Delete a user-made recipe.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Recipe deleted successfully",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = DeleteUserMadeRecipeResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "Recipe not found")
+            })
+    public ResponseEntity<DeleteUserMadeRecipeResponse> deleteUserMadeRecipe(@PathVariable String recipeId) {
+        recipeDataService.deleteUserMadeRecipe(recipeId);
+        return ResponseEntity.ok(DeleteUserMadeRecipeResponse.builder()
+                .message("Successfully deleted user created recipe from database!")
+                .build());
     }
 
 }
